@@ -1,0 +1,244 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Core User Authentication Models
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  password      String?
+  image         String?
+  timezone      String?   @default("UTC")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Authentication relationships
+  accounts      Account[]
+  sessions      Session[]
+  
+  // App-specific relationships
+  journalEntries JournalEntry[]
+  moodEntries   MoodEntry[]
+  userSettings  UserSettings?
+  writingPrompts WritingPrompt[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionToken])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@index([token])
+  @@map("verificationtokens")
+}
+
+// Journal Entry Models
+model JournalEntry {
+  id                String    @id @default(cuid())
+  title             String?
+  content           String    // Main journal content
+  contentEncrypted  String?   // Encrypted version of content
+  isEncrypted       Boolean   @default(false)
+  wordCount         Int       @default(0)
+  readingTime       Int       @default(0) // In minutes
+  tags              String?   // Comma-separated tags
+  location          String?   // Optional location data
+  weatherData       String?   // JSON string for weather info
+  isPrivate         Boolean   @default(true)
+  isFavorite        Boolean   @default(false)
+  isArchived        Boolean   @default(false)
+  userId            String
+  writingPromptId   String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relationships
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  writingPrompt WritingPrompt? @relation(fields: [writingPromptId], references: [id])
+  moodEntries   MoodEntry[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([tags])
+  @@index([isPrivate])
+  @@index([isFavorite])
+  @@index([isArchived])
+  @@map("journal_entries")
+}
+
+// Mood Tracking and Sentiment Analysis
+model MoodEntry {
+  id              String   @id @default(cuid())
+  mood            String   // Primary mood (happy, sad, anxious, etc.)
+  intensity       Int      // 1-10 scale
+  emotions        String?  // Comma-separated secondary emotions
+  
+  // Sentiment Analysis Results
+  sentimentScore      Float?   // -1 to 1 (negative to positive)
+  sentimentMagnitude  Float?   // 0 to infinity (emotional intensity)
+  keyPhrases         String?  // JSON array of detected key phrases
+  emotionalCategories String? // JSON object with emotion scores
+  confidenceScore    Float?   // AI confidence in analysis
+  
+  // Context
+  triggers        String?  // What caused this mood
+  activities      String?  // What user was doing
+  socialContext   String?  // Alone, with friends, family, etc.
+  physicalSymptoms String? // Headache, tension, etc.
+  
+  // Tracking
+  userId          String
+  journalEntryId  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  journalEntry JournalEntry? @relation(fields: [journalEntryId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([mood])
+  @@index([intensity])
+  @@map("mood_entries")
+}
+
+// User Preferences and Habit Tracking
+model UserSettings {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  // Privacy & Security
+  encryptionEnabled    Boolean @default(false)
+  twoFactorEnabled     Boolean @default(false)
+  dataRetentionDays    Int     @default(0) // 0 = keep forever
+  
+  // Notification Preferences
+  emailNotifications   Boolean @default(true)
+  reminderFrequency    String  @default("daily") // daily, weekly, never
+  reminderTime         String? // HH:MM format
+  weeklyReportEnabled  Boolean @default(true)
+  monthlyReportEnabled Boolean @default(true)
+  
+  // Writing Preferences
+  defaultPrivacy       Boolean @default(true)
+  autoSaveEnabled      Boolean @default(true)
+  wordCountGoal        Int?
+  dailyWritingGoal     Int?    // Minutes per day
+  
+  // Mood Tracking
+  moodTrackingEnabled  Boolean @default(true)
+  dailyMoodReminder    Boolean @default(true)
+  sentimentAnalysis    Boolean @default(true)
+  
+  // Habit Tracking
+  streakTracking       Boolean @default(true)
+  currentStreak        Int     @default(0)
+  longestStreak        Int     @default(0)
+  lastEntryDate        DateTime?
+  
+  // AI Features
+  aiPromptsEnabled     Boolean @default(true)
+  aiInsightsEnabled    Boolean @default(true)
+  promptFrequency      String  @default("weekly") // daily, weekly, monthly
+  
+  // Theme & Display
+  theme                String  @default("system") // light, dark, system
+  fontSize             String  @default("medium") // small, medium, large
+  language             String  @default("en")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_settings")
+}
+
+// AI Writing Prompts
+model WritingPrompt {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  category    String   // reflection, gratitude, creative, goal-setting, etc.
+  difficulty  String   @default("beginner") // beginner, intermediate, advanced
+  tags        String?  // Comma-separated tags
+  isActive    Boolean  @default(true)
+  isPersonalized Boolean @default(false) // AI-generated for specific user
+  
+  // AI Generation Data
+  aiGenerated     Boolean @default(false)
+  generationModel String? // GPT model used
+  basePrompt      String? // Original prompt used for generation
+  
+  // Usage Statistics
+  usageCount      Int @default(0)
+  averageRating   Float?
+  
+  // User-specific (if personalized)
+  userId      String?
+  targetMood  String? // Mood this prompt aims to improve
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  user           User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  journalEntries JournalEntry[]
+
+  @@index([category])
+  @@index([difficulty])
+  @@index([isActive])
+  @@index([userId])
+  @@index([aiGenerated])
+  @@index([createdAt])
+  @@map("writing_prompts")
+}

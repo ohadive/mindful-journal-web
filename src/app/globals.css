@@ -1,0 +1,242 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base colors */
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+    --primary: 24 9.8% 10%;
+    --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 20 14.3% 4.1%;
+    --radius: 0.75rem;
+
+    /* Writing-focused colors */
+    --paper: 45 29% 97%;
+    --paper-foreground: 20 14.3% 4.1%;
+    --ink: 20 14.3% 4.1%;
+    --ink-light: 25 5.3% 44.7%;
+    --ink-lighter: 20 5.9% 67.9%;
+
+    /* Mood colors */
+    --mood-happy: 45 93% 47%;
+    --mood-sad: 221 83% 53%;
+    --mood-calm: 142 71% 45%;
+    --mood-anxious: 25 95% 53%;
+    --mood-excited: 346 87% 43%;
+    --mood-neutral: 20 5.9% 67.9%;
+  }
+
+  .dark {
+    /* Base colors - dark mode */
+    --background: 20 14.3% 4.1%;
+    --foreground: 60 9.1% 97.8%;
+    --card: 20 14.3% 4.1%;
+    --card-foreground: 60 9.1% 97.8%;
+    --popover: 20 14.3% 4.1%;
+    --popover-foreground: 60 9.1% 97.8%;
+    --primary: 60 9.1% 97.8%;
+    --primary-foreground: 24 9.8% 10%;
+    --secondary: 12 6.5% 15.1%;
+    --secondary-foreground: 60 9.1% 97.8%;
+    --muted: 12 6.5% 15.1%;
+    --muted-foreground: 24 5.4% 63.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 60 9.1% 97.8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 12 6.5% 15.1%;
+    --input: 12 6.5% 15.1%;
+    --ring: 24 5.7% 82.9%;
+
+    /* Writing-focused colors - dark mode */
+    --paper: 12 6.5% 15.1%;
+    --paper-foreground: 60 9.1% 97.8%;
+    --ink: 60 9.1% 97.8%;
+    --ink-light: 24 5.4% 63.9%;
+    --ink-lighter: 24 5.7% 82.9%;
+
+    /* Mood colors - dark mode */
+    --mood-happy: 45 93% 58%;
+    --mood-sad: 221 83% 63%;
+    --mood-calm: 142 71% 55%;
+    --mood-anxious: 25 95% 63%;
+    --mood-excited: 346 87% 53%;
+    --mood-neutral: 24 5.4% 63.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground;
+  }
+
+  /* Focus styles */
+  .focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Text selection */
+  ::selection {
+    @apply bg-primary/20;
+  }
+}
+
+@layer components {
+  /* Writing container */
+  .writing-container {
+    @apply max-w-prose mx-auto px-4 py-8;
+  }
+
+  .writing-container-wide {
+    @apply max-w-prose-wide mx-auto px-4 py-8;
+  }
+
+  /* Paper effect */
+  .paper {
+    @apply bg-paper text-paper-foreground shadow-sm border border-border/50;
+  }
+
+  .paper-lines {
+    background-image: 
+      linear-gradient(transparent 0, transparent 1.5rem, hsl(var(--border)) 1.5rem, hsl(var(--border)) calc(1.5rem + 1px), transparent calc(1.5rem + 1px));
+    background-size: 100% 2rem;
+    line-height: 2rem;
+    padding-top: 0.5rem;
+  }
+
+  /* Mood indicators */
+  .mood-happy { @apply text-mood-happy; }
+  .mood-sad { @apply text-mood-sad; }
+  .mood-calm { @apply text-mood-calm; }
+  .mood-anxious { @apply text-mood-anxious; }
+  .mood-excited { @apply text-mood-excited; }
+  .mood-neutral { @apply text-mood-neutral; }
+
+  /* Card variants */
+  .card-glass {
+    @apply bg-card/50 backdrop-blur-sm border border-border/50;
+  }
+
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-md hover:scale-[1.02];
+  }
+
+  /* Button variants */
+  .btn-ghost {
+    @apply bg-transparent hover:bg-accent hover:text-accent-foreground;
+  }
+
+  .btn-writing {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-primary/20;
+  }
+
+  /* Animation utilities */
+  .animate-in {
+    @apply animate-fade-in;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+@layer utilities {
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Layout utilities */
+  .center {
+    @apply flex items-center justify-center;
+  }
+
+  .center-between {
+    @apply flex items-center justify-between;
+  }
+
+  /* Prose utilities */
+  .prose-serif {
+    @apply font-serif;
+  }
+
+  .prose-sans {
+    @apply font-sans;
+  }
+
+  .prose-lg {
+    @apply text-lg leading-relaxed;
+  }
+
+  .prose-xl {
+    @apply text-xl leading-relaxed;
+  }
+}
