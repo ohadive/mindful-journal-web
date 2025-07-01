@@ -31,7 +31,7 @@ interface EntrySidebarProps {
   onEntrySelect: (entry: JournalEntry) => void
   onNewEntry: () => void
   onEntriesChange?: (entries: JournalEntry[]) => void
-  searchInputRef?: React.RefObject<HTMLInputElement>
+  searchInputRef?: React.RefObject<HTMLInputElement | null>
   className?: string
 }
 

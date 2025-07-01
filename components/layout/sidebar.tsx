@@ -14,8 +14,8 @@ import {
   Menu,
   X
 } from 'lucide-react'
-import { cn } from '../../src/lib/utils'
-import { Button } from '../../src/components/ui/button'
+import { cn } from '../../lib/utils'
+import { Button } from '../ui/button'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: BarChart3 },

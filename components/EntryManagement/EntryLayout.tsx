@@ -49,7 +49,7 @@ export default function EntryLayout({ className = '' }: EntryLayoutProps) {
   
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>()
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleEntrySelect = useCallback((entry: JournalEntry) => {
     setSelectedEntry(entry)

@@ -1,7 +1,8 @@
 import { useSession, signOut } from 'next-auth/react'
 import { Sun, Moon, Computer, LogOut, Bell } from 'lucide-react'
-import { Button } from '../../src/components/ui/button'
+import { Button } from '../ui/button'
 import { useTheme } from '../../lib/providers/theme-provider'
+import { useEffect, useState } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +15,17 @@ import {
 export function Header() {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const getThemeIcon = () => {
+    if (!mounted) {
+      return <Computer className="h-4 w-4" />
+    }
+    
     switch (theme) {
       case 'light':
         return <Sun className="h-4 w-4" />
