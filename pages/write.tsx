@@ -96,7 +96,7 @@ export default function WritePage({ session }: AuthenticatedPageProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 lg:px-8 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
@@ -161,19 +161,21 @@ export default function WritePage({ session }: AuthenticatedPageProps) {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <ClientOnlyEditor
-            content={content}
-            onChange={setContent}
-            placeholder="Start writing your thoughts, feelings, or reflections..."
-          />
+      <main className="w-full px-4 lg:px-6 xl:px-8 2xl:px-12">
+        <div className="max-w-none lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[95rem] mx-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <ClientOnlyEditor
+              content={content}
+              onChange={setContent}
+                              placeholder="Start writing your thoughts, feelings, or reflections... Use the toolbar for formatting, or try keyboard shortcuts like Ctrl+B for bold, Ctrl+K for links, and Ctrl+1/2/3 for headings."
+            />
+          </div>
         </div>
 
         {/* Writing Stats */}
         {isMounted && (
-          <div className="mt-4 flex justify-center">
-            <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
+          <div className="mt-6 flex justify-center">
+            <div className="flex items-center gap-8 text-sm text-gray-500 dark:text-gray-400">
               <span>{content.replace(/<[^>]*>/g, '').length} characters</span>
               <span>{content.replace(/<[^>]*>/g, '').split(/\s+/).filter(word => word.length > 0).length} words</span>
               <span>Started {new Date().toLocaleTimeString()}</span>
