@@ -20,15 +20,11 @@ import { Button } from '../ui/button'
 const navigation = [
   { name: 'Dashboard', href: '/', icon: BarChart3 },
   { name: 'Write', href: '/write', icon: PenTool },
-  { name: 'Entries', href: '/entries', icon: BookOpen },
-  { name: 'Mood Tracker', href: '/mood', icon: Heart },
-  { name: 'Calendar', href: '/calendar', icon: Calendar },
-  { name: 'Search', href: '/search', icon: Search },
+  { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
 const secondaryNavigation = [
   { name: 'Profile', href: '/profile', icon: User },
-  { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
 export function Sidebar() {
