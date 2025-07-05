@@ -119,14 +119,14 @@ export default function ExportButton({ entry, entries, type, className = '' }: E
       setIsExporting(true)
       const markdownFiles = exportAllEntriesAsMarkdown(entries, { 
         includeMetadata: true, 
-        includePrivate: false 
+        includePrivate: true 
       })
       
       if (Object.keys(markdownFiles).length === 0) {
         showToast({
           type: 'warning',
           title: 'No Entries to Export',
-          message: 'No public entries found to export'
+          message: 'No entries found to export'
         })
         return
       }

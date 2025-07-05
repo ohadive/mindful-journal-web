@@ -1,24 +1,21 @@
 import { GetServerSideProps } from 'next'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../lib/auth'
+import { requireAuth, AuthenticatedPageProps } from '../lib/auth-utils'
 
-// Redirect to dashboard with entry management
-export default function Home() {
+// Redirect authenticated users to dashboard
+export default function Home({ session }: AuthenticatedPageProps) {
   return null
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions)
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: `/auth/signin?callbackUrl=${encodeURIComponent(context.resolvedUrl)}`,
-        permanent: false,
-      },
-    }
+  // Use requireAuth to handle authentication, but then redirect to dashboard
+  const result = await requireAuth()(context)
+  
+  // If requireAuth returns a redirect (unauthenticated), return it
+  if ('redirect' in result) {
+    return result
   }
-
+  
+  // If authenticated, redirect to dashboard
   return {
     redirect: {
       destination: '/dashboard',

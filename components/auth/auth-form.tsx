@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Button } from '../../src/components/ui/button'
 import { Input } from '../../src/components/ui/input'
 import { AlertCircle, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { FaGoogle } from 'react-icons/fa'
 
 const signInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -39,6 +40,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   const isSignUp = mode === 'signup'
   const schema = isSignUp ? signUpSchema : signInSchema
@@ -110,6 +112,30 @@ export function AuthForm({ mode }: AuthFormProps) {
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true)
+    setError('')
+    
+    try {
+      const result = await signIn('google', {
+        redirect: false,
+        callbackUrl: '/'
+      })
+      
+      if (result?.error) {
+        throw new Error(result.error)
+      }
+      
+      if (result?.ok) {
+        router.push('/')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Google sign-in failed')
+    } finally {
+      setIsGoogleLoading(false)
+    }
+  }
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="space-y-1">
@@ -124,6 +150,35 @@ export function AuthForm({ mode }: AuthFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {/* Google OAuth Button */}
+        <div className="mb-6">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogleSignIn}
+            disabled={isGoogleLoading || isLoading}
+          >
+            {isGoogleLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <FaGoogle className="mr-2 h-4 w-4" />
+            )}
+            {isSignUp ? 'Sign up with Google' : 'Sign in with Google'}
+          </Button>
+          
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with email
+              </span>
+            </div>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {error && (
             <div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
